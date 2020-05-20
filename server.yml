@@ -69,7 +69,22 @@ Resources:
           apt-get update
           apt-get install -y docker-ce
           usermod -aG docker ubuntu
-          docker run -P -d nginxdemos/hello
+          docker pull nginxdemos/hello
+          #Install Minikube
+          curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
+          && chmod +x minikube
+          sudo mkdir -p /usr/local/bin/
+          sudo install minikube /usr/local/bin/
+          #Install kubectl
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin/kubectl
+          #start Minikube
+          minikube start --driver=docker
+          sleep60
+          #deploy docker
+          dockerpath=nginxdemos/hello
+          kubectl run --image=-P -d nginxdemos/hello --port=80
       ImageId: !Ref AMI
       KeyName: that-one
       SecurityGroups:
@@ -78,23 +93,10 @@ Resources:
       BlockDeviceMappings:
       - DeviceName: /dev/sda1
         Ebs:
-          VolumeSize: 10
+          VolumeSize: 50
           VolumeType: gp2
           Resources:
   
-  myCluster:
-    Type: 'AWS::EKS::Cluster'
-    Properties:
-      Name: prod
-      Version: '1.14'
-      RoleArn: >-
-        arn:aws:iam::012345678910:role/eks-service-role-AWSServiceRoleForAmazonEKS-EXAMPLEBQ4PI
-      ResourcesVpcConfig:
-        SecurityGroupIds:
-          - Ref: WebServerSecGroup
-        SubnetIds:
-          - Fn::ImportValue: !Sub "${EnvironmentName}-PUB1-SN"
-          - Fn::ImportValue: !Sub "${EnvironmentName}-PUB2-SN"
 
   WebAppGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
