@@ -1,7 +1,8 @@
 pipeline {
      agent any
      stages {
-        stage('Package') {
+
+    stage('Package') {
         steps{
             docker.build("nginxdemos/hello")
          }
