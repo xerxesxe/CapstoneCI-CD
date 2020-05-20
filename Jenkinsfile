@@ -1,16 +1,17 @@
 pipeline {
      agent any
      stages {
-         stage('Build') {
-             steps {
-                 sh run_docker.sh
-             }
+        stage('Package') {
+        steps{
+            docker.build("nginxdemos/hello")
          }
-         stage('Security Scan') {
-              steps { 
-                 aquaMicroscanner imageName: 'nginxdemos/hello', notCompleted: 'exit 1', onDisallowed: 'fail'
-              }
-         }    
+    }
+
+    stage('Scan') {
+        steps{
+            aquaMicroscanner imageName: 'nginxdemos/hello', notCompliesCmd: 'exit 4', onDisallowed: 'fail', outputFormat: 'html'
+         }
+    }
          stage('Upload to AWS') {
               steps {
                   withAWS(region:'us-west-2',credentials:'JenkinsCredentials') {
