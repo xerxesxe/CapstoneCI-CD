@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: List
+items:
+
+  - apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: bulletin
+
+  - apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+    kind: Deployment
+    metadata:
+      name: bulletin
+      namespace: bulletin
+      labels:
+        app: bulletin
+    spec:
+      selector:
+        matchLabels:
+          app: bulletin
+      replicas: 1 # tells deployment to run 2 pods matching the template
+      template:
+        metadata:
+          labels:
+            app: bulletin
+        spec:
+          containers:
+            - name: bulletin
+              image: xerxesxe/bulletinboard:1.0
+              ports:
+                - containerPort: 80
+                  name: http
+                  protocol: TCP
+                livenessProbe:
+                  httpGet:
+                    path: /
+                    port: http
+                readinessProbe:
+                  httpGet:
+                    path: /
+                    port: http
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: bulletin
+      namespace: bulletin
+      labels:
+        app: bulletin
+    spec:
+      type: LoadBalancer
+      ports:
+        - port: 80
+          targetPort: http
+          protocol: TCP
+          name: http
+      selector:
+        app: bulletin
