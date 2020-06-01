@@ -9,12 +9,12 @@ pipeline {
                   sh "docker tag udacity_capstone:latest 994212878958.dkr.ecr.us-east-2.amazonaws.com/udacity_capstone:latest"
                   sh "docker push 994212878958.dkr.ecr.us-east-2.amazonaws.com/udacity_capstone:latest"
              }
-         }*/
+         
          stage('Lint') {
               steps {
                   sh 'tidy -q -e *.html'
               }
-         }      
+         }     }*/ 
          stage('Upload to AWS') {
               steps {
                   withAWS(region:'us-west-2',credentials:'JenkinsCredentials') {
