@@ -1,7 +1,7 @@
 pipeline {
      agent any
      stages {
-         stage('Build') {
+         /*stage('Build') {
              steps {
                   sh "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 994212878958.dkr.ecr.us-east-2.amazonaws.com"
                   sh "cd bulletin-board-app/"
@@ -9,7 +9,7 @@ pipeline {
                   sh "docker tag udacity_capstone:latest 994212878958.dkr.ecr.us-east-2.amazonaws.com/udacity_capstone:latest"
                   sh "docker push 994212878958.dkr.ecr.us-east-2.amazonaws.com/udacity_capstone:latest"
              }
-         }
+         }*/
          stage('Lint') {
               steps {
                   sh 'tidy -q -e *.html'
