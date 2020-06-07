@@ -1,31 +1,65 @@
 pipeline {
-     agent any
-     stages {
-         /*stage('Build') {
-             steps {
-                  sh "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 994212878958.dkr.ecr.us-east-2.amazonaws.com"
-                  sh "cd bulletin-board-app/"
-                  sh "docker build -t udacity_capstone ."
-                  sh "docker tag udacity_capstone:latest 994212878958.dkr.ecr.us-east-2.amazonaws.com/udacity_capstone:latest"
-                  sh "docker push 994212878958.dkr.ecr.us-east-2.amazonaws.com/udacity_capstone:latest"
-             }
-         
-         stage('Lint') {
-              steps {
-                  sh 'tidy -q -e *.html'
-              }
-         }     }*/ 
-         stage('Upload to AWS') {
-              steps {
-                  withAWS(region:'us-west-2',credentials:'JenkinsCredentials') {
-                  sh 'echo "deploying with AWS creds"'
-                  sh "aws eks --region us-east-2 update-kubeconfig --name capstone"
-                  sh "kubectl run udacity-project --image=994212878958.dkr.ecr.us-east-2.amazonaws.com/udacity_capstone:latest --requests=cpu=500m --expose --port=3000"
-                  sh "kubectl get deployments"
-                  sh "kubectl expose deployment udacity-project --type=LoadBalancer --name=udacity-capstone"
-                  sh "kubectl get services udacity-capstone"
-                  }
-              }
-         }
-     }
+   agent any
+   environment {
+       registry = "994212878958.dkr.ecr.us-east-2.amazonaws.com/udacity_capstone"
+       GOCACHE = "/tmp"
+   }
+   stages {
+       stage('Build') {
+           agent {
+               docker {
+                   image 'capstone'
+               }
+           }
+           steps {
+               // Create our project directory.
+               sh 'cd ${GOPATH}/src'
+               sh 'mkdir -p ${GOPATH}/src/hello-world'
+               // Copy all files in our Jenkins workspace to our project directory.               
+               sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+               // Build the app.
+               sh 'go build'              
+           }    
+       }
+       stage('Test') {
+           agent {
+               docker {
+                   image 'capstone'
+               }
+           }
+           steps {                
+               // Create our project directory.
+               sh 'cd ${GOPATH}/src'
+               sh 'mkdir -p ${GOPATH}/src/hello-world'
+               // Copy all files in our Jenkins workspace to our project directory.               
+               sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+               // Remove cached test results.
+               sh 'go clean -cache'
+               // Run Unit Tests.
+               sh 'go test ./... -v -short'           
+           }
+       }
+       stage('Publish') {
+           environment {
+               registryCredential = 'dockerhub'
+           }
+           steps{
+               script {
+                   def appimage = docker.build registry + ":$BUILD_NUMBER"
+                   docker.withRegistry( '', registryCredential ) {
+                       appimage.push()
+                       appimage.push('latest')
+                   }
+               }
+           }
+       }
+       stage ('Deploy') {
+           steps {
+               script{
+                   def image_id = registry + ":$BUILD_NUMBER"
+                   sh "ansible-playbook  playbook.yml --extra-vars \"image_id=${image_id}\""
+               }
+           }
+       }
+   }
 }
