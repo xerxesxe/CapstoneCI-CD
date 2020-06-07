@@ -1,7 +1,7 @@
 pipeline {
    agent any
    environment {
-       registry = "994212878958.dkr.ecr.us-east-2.amazonaws.com/udacity_capstone"
+       registry = "xerxesxe/bulletinboard"
        GOCACHE = "/tmp"
    }
    stages {
