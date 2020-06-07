@@ -8,7 +8,7 @@ pipeline {
        stage('Build') {
            agent {
                docker {
-                   image 'capstone'
+                   image 'bulletinboard'
                }
            }
            steps {
@@ -24,7 +24,7 @@ pipeline {
        stage('Test') {
            agent {
                docker {
-                   image 'capstone'
+                   image 'bulletinboard'
                }
            }
            steps {                
