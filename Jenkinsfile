@@ -1,14 +1,14 @@
 pipeline {
    agent any
    environment {
-       registry = "magalixcorp/k8scicd"
+       registry = "xerxesxe/bulletinboard"
        GOCACHE = "/tmp"
    }
    stages {
        stage('Build') {
            agent {
                docker {
-                   image 'golang'
+                   image 'bb'
                }
            }
            steps {
@@ -24,7 +24,7 @@ pipeline {
        stage('Test') {
            agent {
                docker {
-                   image 'golang'
+                   image 'bb'
                }
            }
            steps {                
