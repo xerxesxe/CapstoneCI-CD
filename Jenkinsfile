@@ -38,7 +38,7 @@ pipeline {
                // Remove cached test results.
                sh 'go clean -cache'
                // Run Unit Tests.
-               aquaMicroscanner imageName: 'golang:latest', notCompleted: 'exit 1', onDisallowed: 'fail'
+               aquaMicroscanner imageName: 'golang:latest', notCompliesCmd: 'exit 1', onDisallowed: 'fail'
                //sh 'go test ./... -v -short'           
            }
        }
