@@ -17,6 +17,8 @@ pipeline {
                sh 'mkdir -p ${GOPATH}/src/hello-world'
                // Copy all files in our Jenkins workspace to our project directory.               
                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+
+               sh docker run --rm -i hadolint/hadolint < Dockerfile
                // Build the app.
                sh 'go build'              
            }    
@@ -36,6 +38,7 @@ pipeline {
                // Remove cached test results.
                sh 'go clean -cache'
                // Run Unit Tests.
+               sh docker run --rm -i hadolint/hadolint < Dockerfile
                //sh 'go test ./... -v -short'           
            }
        }
