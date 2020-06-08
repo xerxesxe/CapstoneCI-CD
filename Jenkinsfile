@@ -38,7 +38,7 @@ pipeline {
                // Remove cached test results.
                sh 'go clean -cache'
                // Run Unit Tests.
-               sh docker run --rm -i hadolint/hadolint < Dockerfile
+               
                //sh 'go test ./... -v -short'           
            }
        }
