@@ -58,10 +58,9 @@ pipeline {
                script{
                    def image_id = registry + ":$BUILD_NUMBER"
                     sh "aws eks --region us-east-2 update-kubeconfig --name capstone"
-                    sh "kubectl set image xerxesxe/k8scicd golang=image:$BUILD_NUMBER"
+                    sh "kubectl set image deployment/golang golang=image:$BUILD_NUMBER"
                     sh "kubectl get deployments"
-                    sh "kubectl expose deployment golang --type=LoadBalancer --name=capstone"
-                    sh "kubectl get services udacity-capstone"
+                    sh "kubectl get services golang"
                }
            }
        }
