@@ -17,10 +17,11 @@ pipeline {
                sh 'mkdir -p ${GOPATH}/src/hello-world'
                // Copy all files in our Jenkins workspace to our project directory.               
                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+               aquaMicroscanner imageName: 'agolang:latest', notCompleted: 'exit 1', onDisallowed: 'fail'
 
-               sh "docker run --rm -i hadolint/hadolint < Dockerfile"
                // Build the app.
-               sh 'go build'              
+               sh 'go build' 
+
            }    
        }
        stage('Test') {
