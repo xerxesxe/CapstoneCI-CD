@@ -17,8 +17,7 @@ pipeline {
                sh 'mkdir -p ${GOPATH}/src/hello-world'
                // Copy all files in our Jenkins workspace to our project directory.               
                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
-               aquaMicroscanner imageName: 'agolang:latest', notCompleted: 'exit 1', onDisallowed: 'fail'
-
+               
                // Build the app.
                sh 'go build' 
 
@@ -39,7 +38,7 @@ pipeline {
                // Remove cached test results.
                sh 'go clean -cache'
                // Run Unit Tests.
-               
+               aquaMicroscanner imageName: 'golang:latest', notCompleted: 'exit 1', onDisallowed: 'fail'
                //sh 'go test ./... -v -short'           
            }
        }
