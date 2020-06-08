@@ -18,7 +18,7 @@ pipeline {
                // Copy all files in our Jenkins workspace to our project directory.               
                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
 
-               sh docker run --rm -i hadolint/hadolint < Dockerfile
+               sh "docker run --rm -i hadolint/hadolint < Dockerfile"
                // Build the app.
                sh 'go build'              
            }    
