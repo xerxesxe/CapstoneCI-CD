@@ -36,8 +36,7 @@ pipeline {
                // Copy all files in our Jenkins workspace to our project directory.               
                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
                // Remove cached test results.
-               sh "docker run --rm -i hadolint/hadolint < Dockerfile"
-               
+               sh "docker run -v /var/run/docker.sock:/var/run/docker.sock --rm -i hadolint/hadolint < Dockerfile"
                sh 'go clean -cache'
                // Run Unit Tests.
                
