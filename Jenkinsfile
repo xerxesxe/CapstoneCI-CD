@@ -30,7 +30,7 @@ pipeline {
             }
         }
         steps {
-            sh 'cd ${GOPATH}/src'
+            sh 'cd ${GOPATH}/src/hello-world'
             sh 'hadolint dockerfiles/* | tee -a hadolint_lint.txt'
         }
         post {
