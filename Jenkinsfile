@@ -36,7 +36,6 @@ pipeline {
                // Copy all files in our Jenkins workspace to our project directory.               
                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
                // Remove cached test results.
-               //sh "docker run -v /var/run/docker.sock:/var/run/docker.sock --rm -i hadolint/hadolint < Dockerfile"
                sh 'go clean -cache'
                // Run Unit Tests.
                
@@ -50,7 +49,7 @@ pipeline {
             }
         }
         steps {
-            sh 'hadolint dockerfiles/* | tee -a hadolint_lint.txt'
+            sh 'hadolint > Dockerfile | tee -a hadolint_lint.txt'
         }
         post {
             always {
