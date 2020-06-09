@@ -36,12 +36,27 @@ pipeline {
                // Copy all files in our Jenkins workspace to our project directory.               
                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
                // Remove cached test results.
-               sh "docker run -v /var/run/docker.sock:/var/run/docker.sock --rm -i hadolint/hadolint < Dockerfile"
+               //sh "docker run -v /var/run/docker.sock:/var/run/docker.sock --rm -i hadolint/hadolint < Dockerfile"
                sh 'go clean -cache'
                // Run Unit Tests.
                
                //sh 'go test ./... -v -short'           
            }
+       }
+        stage ("lint dockerfile") {
+            agent {
+                docker {
+                image 'hadolint/hadolint:latest-debian'
+            }
+        }
+        steps {
+            sh 'hadolint dockerfiles/* | tee -a hadolint_lint.txt'
+        }
+        post {
+            always {
+                archiveArtifacts 'hadolint_lint.txt'
+            }
+        }
        }
        stage('Publish') {
            environment {
