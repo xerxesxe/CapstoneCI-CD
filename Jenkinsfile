@@ -22,6 +22,22 @@ pipeline {
                sh 'go build' 
 
            }    
+        }
+        stage ("lint dockerfile") {
+            agent {
+                docker {
+                    image 'hadolint/hadolint:latest-debian' //'hadolint/hadolint:latest-debian'
+            }
+        }
+        steps {
+            sh 'cd ${GOPATH}/src'
+            sh 'hadolint dockerfiles/* | tee -a hadolint_lint.txt'
+        }
+        post {
+            always {
+                archiveArtifacts 'hadolint_lint.txt'
+            }
+        }
        }
        stage('Test') {
            agent {
@@ -42,21 +58,7 @@ pipeline {
                //sh 'go test ./... -v -short'           
            }
        }
-        stage ("lint dockerfile") {
-            agent {
-                docker {
-                image 'hadolint/hadolint:latest-debian'
-            }
-        }
-        steps {
-            sh 'hadolint dockerfiles/* | tee -a hadolint_lint.txt'
-        }
-        post {
-            always {
-                archiveArtifacts 'hadolint_lint.txt'
-            }
-        }
-       }
+
        stage('Publish') {
            environment {
                registryCredential = 'dockerhub'
