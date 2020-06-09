@@ -1,25 +1,26 @@
-### This is a Udacity DevOps Project
+### This is my Udacity DevOps Capstone Project
 
-In this project, I will operationalize a Machine Learning Microservice API.
-This project goal is to operationalize this working, machine learning microservice using kubernetes, which is an open-source system for automating the management of containerized applications. In this project I will:
-
-Test the project code using linting
-Complete a Dockerfile to containerize this application
-Deploy a containerized application using Docker and make a prediction
-Improve the log statements in the source code for this application
-Configure Kubernetes and create a Kubernetes cluster
-Deploy a container using Kubernetes and make a prediction
-Upload a complete Github repo with CircleCI to indicate that the code has been tested
+This Project will Deploy a simple Golang App into an EKS Kubernetes Cluster. This will be done via a rolling CI/CD pipeline in Jenkins.
 
 ### Instructions
-First Setup a python virtual environment and activate it
-python3 -m venv ~/.devops
-source ~/.devops/bin/activate
 
-#Install the necessary dependencies
-make install
+## Install the necessary dependencies
 
-#Run the Main app
-1. Run in Docker:  `./run_docker.sh`
-2. Run in Kubernetes:  `./run_kubernetes.sh`
-3. Run the make_prediction.sh script
+1. Create VPC Infrastructure with the infra.yaml file and teh Parameters.json file in cloudformation
+2. Create an EKS Cluster either by using the create_eks.sh script or the eks_config.yaml with cloudformation
+
+# Configure Jenkins
+
+1. Install Jenkins
+2. Set Docker-Hub Credentials and Github Credentials
+3. Install Docker
+4. Configure Pipeline in Jenkins
+
+# Jenkinsfile
+
+The Jenkinsfile contains 5 Stages
+First Stage builds the App
+Second Stage is for linting the Dockerfile
+Third Stage is for Testing the App
+Fourth Stage is for Publishing the new Image
+Fifth Stage Deploys the latest Image to the EKS Cluster
