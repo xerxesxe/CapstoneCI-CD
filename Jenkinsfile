@@ -20,7 +20,6 @@ pipeline {
                
                // Build the app.
                sh 'go build'
-               sh "run -p 8000:80 golang" 
 
            }    
         }
