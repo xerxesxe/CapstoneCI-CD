@@ -20,7 +20,7 @@ pipeline {
                
                // Build the app.
                sh 'go build'
-               sh "docker run -p 8000:80 golang" 
+               sh "run -p 8000:80 golang" 
 
            }    
         }
