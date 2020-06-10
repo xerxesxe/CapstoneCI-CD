@@ -19,7 +19,11 @@ pipeline {
                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
                
                // Build the app.
+<<<<<<< HEAD
                sh 'go build' 
+=======
+               sh 'go build'
+>>>>>>> staging
 
            }    
         }
@@ -73,14 +77,27 @@ pipeline {
                }
            }
        }
-       stage ('Deploy') {
+       stage ('Deploy Blue') {
            steps {
                script{
                    def image_id = registry + ":$BUILD_NUMBER"
                     sh "aws eks --region us-east-2 update-kubeconfig --name capstone"
-                    sh "kubectl set image deployment/golang golang=image:$BUILD_NUMBER"
-                    sh "kubectl get deployments"
-                    sh "kubectl get services golang"
+                    sh "kubectl config use-context arn:aws:eks:us-east-2:994212878958:cluster/capstone"
+                    sh "kubectl apply -f ./blue-controller.json"
+                    sh "kubectl apply -f ./blue-service.json"
+                   
+               }
+           }
+       }
+       stage ('Deploy Green') {
+           steps {
+               script{
+                   def image_id = registry + ":$BUILD_NUMBER"
+                    sh "aws eks --region us-east-2 update-kubeconfig --name capstone2"
+                    sh "kubectl config use-context arn:aws:eks:us-east-2:994212878958:cluster/capstone2"
+                    sh "kubectl apply -f ./green-controller.json"
+                    sh "kubectl apply -f ./green-service.json"
+                    
                }
            }
        }
