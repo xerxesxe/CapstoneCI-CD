@@ -19,12 +19,7 @@ pipeline {
                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
                
                // Build the app.
-<<<<<<< HEAD
-               sh 'go build' 
-=======
                sh 'go build'
->>>>>>> staging
-
            }    
         }
         stage ("lint dockerfile") {
