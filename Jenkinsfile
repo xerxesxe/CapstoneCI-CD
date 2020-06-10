@@ -17,9 +17,27 @@ pipeline {
                sh 'mkdir -p ${GOPATH}/src/hello-world'
                // Copy all files in our Jenkins workspace to our project directory.               
                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+               
                // Build the app.
-               sh 'go build'              
+               sh 'go build' 
+
            }    
+        }
+        stage ("lint dockerfile") {
+            agent {
+                docker {
+                    image 'hadolint/hadolint:latest-debian' //'hadolint/hadolint:latest-debian'
+            }
+        }
+        steps {
+
+            sh 'hadolint Dockerfile | tee -a hadolint_lint.txt'
+        }
+        post {
+            always {
+                archiveArtifacts 'hadolint_lint.txt'
+            }
+        }
        }
        stage('Test') {
            agent {
@@ -36,9 +54,11 @@ pipeline {
                // Remove cached test results.
                sh 'go clean -cache'
                // Run Unit Tests.
+               
                //sh 'go test ./... -v -short'           
            }
        }
+
        stage('Publish') {
            environment {
                registryCredential = 'dockerhub'
@@ -53,14 +73,27 @@ pipeline {
                }
            }
        }
-       stage ('Deploy') {
+       stage ('Deploy Blue') {
            steps {
                script{
                    def image_id = registry + ":$BUILD_NUMBER"
                     sh "aws eks --region us-east-2 update-kubeconfig --name capstone"
-                    sh "kubectl set image deployment/golang golang=image:$BUILD_NUMBER"
-                    sh "kubectl get deployments"
-                    sh "kubectl get services golang"
+                    sh "kubectl config use-context arn:aws:eks:us-east-2:994212878958:cluster/capstone"
+                    sh "kubectl apply -f ./blue-controller.json"
+                    sh "kubectl apply -f ./blue-service.json"
+                   
+               }
+           }
+       }
+       stage ('Deploy Green') {
+           steps {
+               script{
+                   def image_id = registry + ":$BUILD_NUMBER"
+                    sh "aws eks --region us-east-2 update-kubeconfig --name capstone2"
+                    sh "kubectl config use-context arn:aws:eks:us-east-2:994212878958:cluster/capstone2"
+                    sh "kubectl apply -f ./green-controller.json"
+                    sh "kubectl apply -f ./green-service.json"
+                    
                }
            }
        }
