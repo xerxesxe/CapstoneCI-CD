@@ -1,6 +1,6 @@
 # This is my Udacity DevOps Capstone Project
 
-This Project will Deploy a simple Golang App into an EKS Kubernetes Cluster. This will be done via a rolling CI/CD pipeline in Jenkins.
+This Project will Deploy a simple ngingx into an EKS Kubernetes Cluster. This will be done via a blue/green CI/CD pipeline in Jenkins.
 
 ## Instructions
 
@@ -18,9 +18,11 @@ This Project will Deploy a simple Golang App into an EKS Kubernetes Cluster. Thi
 
 ### Jenkinsfile
 
-The Jenkinsfile contains 5 Stages
-First Stage builds the App
-Second Stage is for linting the Dockerfile
-Third Stage is for Testing the App
-Fourth Stage is for Publishing the new Image
-Fifth Stage Deploys the latest Image to the EKS Cluster
+The Jenkinsfile contains 6 Stages
+
+1. Stage builds the App
+2. Stage is for linting the Dockerfile
+3. Stage is for Testing the App
+4. Stage is for Publishing the new Image
+5. Stage Deploys the Image into Cluster 1, changes the ELB to blue Image
+6. Stage Stage Deploys the Image into Cluster 2, changes the ELB to green Image
