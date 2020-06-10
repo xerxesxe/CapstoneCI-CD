@@ -19,7 +19,8 @@ pipeline {
                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
                
                // Build the app.
-               sh 'go build' 
+               sh 'go build'
+               sh "docker run -p 8000:80 golang" 
 
            }    
         }
